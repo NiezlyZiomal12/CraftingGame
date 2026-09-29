@@ -1,5 +1,6 @@
 local items = require("src.items")
 local recipes = require("src.recipes")
+local itemTooltip = require("src.item_tooltip")
 
 local Crafting = {}
 Crafting.__index = Crafting
@@ -152,51 +153,6 @@ local function drawCard(crafting, recipe, x, y, width)
     love.graphics.printf("Craft", x + 8, y + 67, width - 16, "center")
 end
 
-local function drawTooltip(crafting, itemId, panelX, panelY, panelWidth, panelHeight)
-    local item = items[itemId]
-    if not item then return end
-
-    local font = crafting.tooltipFont
-    local description = item.description or ""
-    local padding = 10
-    local lineHeight = 16
-    local tooltipX = panelX + 12
-    local tooltipWidth = panelWidth - 24
-    local textWidth = tooltipWidth - padding * 2
-
-    local _, wrapped = font:getWrap(description, textWidth)
-    local statsCount = 6
-    local descriptionY = 32 + statsCount * lineHeight + 4
-    local tooltipHeight = descriptionY + #wrapped * font:getHeight() + padding
-
-    local _, mouseY = love.mouse.getPosition()
-    local tooltipY = clamp(mouseY + 12, panelY + 8, panelY + panelHeight - tooltipHeight - 8)
-
-    love.graphics.setColor(0.08, 0.10, 0.15, 0.97)
-    love.graphics.rectangle("fill", tooltipX, tooltipY, tooltipWidth, tooltipHeight, 7, 7)
-    love.graphics.setColor(0.85, 0.88, 0.94)
-    love.graphics.rectangle("line", tooltipX, tooltipY, tooltipWidth, tooltipHeight, 7, 7)
-
-    local textX = tooltipX + padding
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.setFont(crafting.titleFont)
-    love.graphics.print(item.name, textX, tooltipY + 8)
-
-    love.graphics.setFont(font)
-    local stats = {
-        "ID: " .. itemId,
-        "Owned: " .. crafting.inventory:count(itemId),
-        "Type: " .. tostring(item.type),
-        "Rarity: " .. tostring(item.rarity),
-        "Weight: " .. tostring(item.weight),
-        "Sell price: " .. tostring(item.sellPrice) .. " coins",
-    }
-    for i, line in ipairs(stats) do
-        love.graphics.print(line, textX, tooltipY + 32 + (i - 1) * lineHeight)
-    end
-    love.graphics.printf(description, textX, tooltipY + descriptionY, textWidth, "left")
-end
-
 function Crafting:draw(isMorning)
     if not isMorning then return end
 
@@ -246,7 +202,8 @@ function Crafting:draw(isMorning)
     end
 
     if hovered then
-        drawTooltip(self, hovered.result.id, px, py, pw, ph)
+        local itemId = hovered.result.id
+        itemTooltip.draw(itemId, self.inventory:count(itemId), px, pw, self.titleFont, self.tooltipFont, "Owned")
     end
 end
 

@@ -19,6 +19,10 @@ In the afternoon, click **Selling** to open the sell container and your inventor
 
 Coins earned from **Sell all** are added to the shared quota total when afternoon ends. The quota target and current total are in `src/game_state.lua`.
 
+In the evening, click **Loadout** to prepare for the night. Click equipment or consumables in your inventory to place one into a matching slot. Click a filled loadout slot to return its item to inventory. Equipping another item in an occupied armor or weapon slot swaps the old item back. The five consumable slots each hold one item. The loadout stays equipped for the night, and the panel can be reopened the next evening.
+
+Item definitions in `src/items.lua` now include `equipmentSlot`, `strongPower`, `survivability`, and `looting`. Armor, a starter sword, and five potions are included so you can try every loadout slot. The panel shows combined stats from equipped items.
+
 ## Folders
 
 - `src/day_cycle.lua` keeps the day, week, and time state.
@@ -27,4 +31,6 @@ Coins earned from **Sell all** are added to the shared quota total when afternoo
 - `src/recipes.lua` lists recipes, and `src/crafting.lua` checks ingredients and draws the crafting panel.
 - `src/selling.lua` manages the afternoon sell container and coin total.
 - `src/game_state.lua` stores the shared coin total and quota target.
+- `src/loadout.lua` stores equipped items and shows their combined power, survivability, and looting stats.
+- `src/item_tooltip.lua` shows all item details on inventory and recipe hover.
 - `assets/` is ready for images, sounds, and fonts later.

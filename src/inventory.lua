@@ -1,4 +1,5 @@
 local items = require("src.items")
+local itemTooltip = require("src.item_tooltip")
 
 local Inventory = {}
 Inventory.__index = Inventory
@@ -44,6 +45,13 @@ function Inventory.new()
             { id = "iron_bar", quantity = 4 },
             { id = "stone",    quantity = 3 },
             { id = "fiber",    quantity = 8 },
+            { id = "leather_helmet", quantity = 1 },
+            { id = "leather_chestplate", quantity = 1 },
+            { id = "leather_gloves", quantity = 1 },
+            { id = "leather_leggings", quantity = 1 },
+            { id = "leather_boots", quantity = 1 },
+            { id = "rusty_sword", quantity = 1 },
+            { id = "healing_potion", quantity = 5 },
         },
     }, Inventory)
 end
@@ -153,34 +161,6 @@ function Inventory:slotAt(x, y)
     return hoveredSlot(self, x, y, lx, ly, lw, lh)
 end
 
-local function drawTooltip(inventory, slot, panelX, panelY, panelWidth, panelHeight)
-    local item = items[slot.id]
-    local tooltipX = panelX + 12
-    local tooltipWidth = panelWidth - 24
-    local _, descriptionLines = inventory.tooltipFont:getWrap(item.description, tooltipWidth - 20)
-    local tooltipHeight = 148 + #descriptionLines * inventory.tooltipFont:getHeight()
-    local _, mouseY = love.mouse.getPosition()
-    local tooltipY = clamp(mouseY + 12, panelY + 8, panelY + panelHeight - tooltipHeight - 8)
-
-    love.graphics.setColor(0.08, 0.10, 0.15, 0.97)
-    love.graphics.rectangle("fill", tooltipX, tooltipY, tooltipWidth, tooltipHeight, 7, 7)
-    love.graphics.setColor(0.85, 0.88, 0.94)
-    love.graphics.rectangle("line", tooltipX, tooltipY, tooltipWidth, tooltipHeight, 7, 7)
-
-    local textX = tooltipX + 10
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.setFont(inventory.titleFont)
-    love.graphics.print(item.name, textX, tooltipY + 8)
-    love.graphics.setFont(inventory.tooltipFont)
-    love.graphics.print("ID: " .. slot.id, textX, tooltipY + 32)
-    love.graphics.print("Quantity: " .. slot.quantity, textX, tooltipY + 48)
-    love.graphics.print("Type: " .. item.type, textX, tooltipY + 64)
-    love.graphics.print("Rarity: " .. item.rarity, textX, tooltipY + 80)
-    love.graphics.print("Weight: " .. item.weight, textX, tooltipY + 96)
-    love.graphics.print("Sell price: " .. item.sellPrice .. " coins", textX, tooltipY + 112)
-    love.graphics.printf(item.description, textX, tooltipY + 132, tooltipWidth - 20, "left")
-end
-
 function Inventory:draw()
     local bx, by, bw, bh = buttonBounds()
     love.graphics.setColor(0.13, 0.16, 0.22)
@@ -234,7 +214,7 @@ function Inventory:draw()
     end
 
     if hovered then
-        drawTooltip(self, hovered, px, py, pw, ph)
+        itemTooltip.draw(hovered.id, hovered.quantity, px, pw, self.titleFont, self.tooltipFont)
     end
 end
 
