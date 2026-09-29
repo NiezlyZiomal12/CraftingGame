@@ -16,7 +16,7 @@ local function clamp(value, minimum, maximum)
 end
 
 local function buttonBounds()
-    w, h = love.graphics.getDimensions()
+    local _, h = love.graphics.getDimensions()
     return 20, h - 54, 100, 38
 end
 
@@ -40,22 +40,10 @@ function Inventory.new()
         open = false,
         scroll = 0,
         slots = {
-            { id = "wood",  quantity = 5 },
-            { id = "stone", quantity = 3 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
-            { id = "fiber", quantity = 8 },
+            { id = "wood",     quantity = 5 },
+            { id = "iron_bar", quantity = 4 },
+            { id = "stone",    quantity = 3 },
+            { id = "fiber",    quantity = 8 },
         },
     }, Inventory)
 end
@@ -71,33 +59,47 @@ function Inventory.add(inventory, id, quantity)
         return false
     end
 
-    for _, slot in ipairs(inventory.slots) do
+    for index, slot in ipairs(inventory.slots) do
         if slot.id == id then
             slot.quantity = slot.quantity + quantity
+            inventory.scroll = (index - 1) * rowStep
             return true
         end
     end
 
     table.insert(inventory.slots, { id = id, quantity = quantity })
+    inventory.scroll = (#inventory.slots - 1) * rowStep
     return true
 end
 
+function Inventory.count(inventory, id)
+    local total = 0
+    for _, slot in ipairs(inventory.slots) do
+        if slot.id == id then
+            total = total + slot.quantity
+        end
+    end
+    return total
+end
+
 function Inventory.remove(inventory, id, quantity)
-    if type(quantity) ~= "number" or quantity <= 0 or quantity % 1 ~= 0 then
+    if type(quantity) ~= "number" or quantity <= 0 or quantity % 1 ~= 0
+        or Inventory.count(inventory, id) < quantity then
         return false
     end
 
-    for index, slot in ipairs(inventory.slots) do
-        if slot.id == id and slot.quantity >= quantity then
-            slot.quantity = slot.quantity - quantity
+    for index = #inventory.slots, 1, -1 do
+        local slot = inventory.slots[index]
+        if slot.id == id then
+            local taken = math.min(slot.quantity, quantity)
+            slot.quantity = slot.quantity - taken
+            quantity = quantity - taken
             if slot.quantity == 0 then
                 table.remove(inventory.slots, index)
             end
-            return true
+            if quantity == 0 then return true end
         end
     end
-
-    return false
 end
 
 function Inventory:mousepressed(x, y, button)

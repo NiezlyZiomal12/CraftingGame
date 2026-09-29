@@ -1,9 +1,11 @@
 local DayCycle = require("src.day_cycle")
 local Inventory = require("src.inventory")
+local Crafting = require("src.crafting")
 
 local scene = {}
 local calendar = DayCycle.new()
 local inventory = Inventory.new()
+local crafting = Crafting.new(inventory)
 local titleFont
 local bodyFont
 local buttonFont
@@ -23,6 +25,9 @@ end
 
 local function advance()
     DayCycle.advance(calendar)
+    if calendar.stamp ~= 1 then
+        crafting:close()
+    end
 end
 
 function scene.load()
@@ -30,6 +35,7 @@ function scene.load()
     bodyFont = love.graphics.newFont(16)
     buttonFont = love.graphics.newFont(14)
     inventory:load()
+    crafting:load()
 end
 
 function scene.draw()
@@ -51,6 +57,7 @@ function scene.draw()
     love.graphics.setFont(titleFont)
     love.graphics.printf(DayCycle.stamps[calendar.stamp], width * 0.55 - 20, 18, width * 0.45, "right")
     inventory:draw()
+    crafting:draw(calendar.stamp == 1)
 
     local x, y, buttonWidth, buttonHeight = buttonBounds()
     love.graphics.setColor(0.13, 0.16, 0.22)
@@ -63,6 +70,7 @@ end
 function scene.mousepressed(x, y, button)
     if button ~= 1 then return end
 
+    if crafting:mousepressed(x, y, button, calendar.stamp == 1) then return end
     if inventory:mousepressed(x, y, button) then return end
 
     local bx, by, bw, bh = buttonBounds()
@@ -73,6 +81,7 @@ end
 
 function scene.wheelmoved(x, y)
     inventory:wheelmoved(x, y)
+    crafting:wheelmoved(x, y, calendar.stamp == 1)
 end
 
 function scene.keypressed(key)
