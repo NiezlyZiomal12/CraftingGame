@@ -4,6 +4,7 @@ return {
         type = "Material",
         rarity = "Common",
         weight = 1,
+        sellPrice = 3,
         description = "A basic crafting material gathered from trees.",
     },
     stone = {
@@ -11,6 +12,7 @@ return {
         type = "Material",
         rarity = "Common",
         weight = 2,
+        sellPrice = 2,
         description = "A sturdy material used to make simple tools.",
     },
     fiber = {
@@ -18,6 +20,7 @@ return {
         type = "Material",
         rarity = "Common",
         weight = 0.2,
+        sellPrice = 1,
         description = "Plant fibers that can be woven or tied together.",
     },
     iron_bar = {
@@ -25,6 +28,7 @@ return {
         type = "Material",
         rarity = "Common",
         weight = 2,
+        sellPrice = 8,
         description = "A metal bar ready to be shaped into equipment.",
     },
     steel_sword = {
@@ -32,6 +36,7 @@ return {
         type = "Weapon",
         rarity = "Uncommon",
         weight = 4,
+        sellPrice = 25,
         description = "A sturdy sword with a wooden handle.",
     },
     rope = {
@@ -39,6 +44,7 @@ return {
         type = "Tool",
         rarity = "Common",
         weight = 1,
+        sellPrice = 4,
         description = "A strong rope made from twisted fibers.",
     },
 }

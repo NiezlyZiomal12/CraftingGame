@@ -22,7 +22,7 @@ end
 
 local function panelBounds()
     local width, height = love.graphics.getDimensions()
-    return 20, 50, math.min(350, math.floor(width * 0.48)), height - 120
+    return 20, 70, math.min(350, math.floor(width * 0.48)), height - 140
 end
 
 local function listLayout(inventory, panelX, panelY, panelWidth, panelHeight)
@@ -145,12 +145,20 @@ local function hoveredSlot(inventory, mouseX, mouseY, listX, listY, listWidth, l
     end
 end
 
+function Inventory:slotAt(x, y)
+    if not self.open then return nil end
+    local px, py, pw, ph = panelBounds()
+    local lx, ly, lw, lh, _, maxScroll = listLayout(self, px, py, pw, ph)
+    self.scroll = clamp(self.scroll, 0, maxScroll)
+    return hoveredSlot(self, x, y, lx, ly, lw, lh)
+end
+
 local function drawTooltip(inventory, slot, panelX, panelY, panelWidth, panelHeight)
     local item = items[slot.id]
     local tooltipX = panelX + 12
     local tooltipWidth = panelWidth - 24
     local _, descriptionLines = inventory.tooltipFont:getWrap(item.description, tooltipWidth - 20)
-    local tooltipHeight = 132 + #descriptionLines * inventory.tooltipFont:getHeight()
+    local tooltipHeight = 148 + #descriptionLines * inventory.tooltipFont:getHeight()
     local _, mouseY = love.mouse.getPosition()
     local tooltipY = clamp(mouseY + 12, panelY + 8, panelY + panelHeight - tooltipHeight - 8)
 
@@ -169,7 +177,8 @@ local function drawTooltip(inventory, slot, panelX, panelY, panelWidth, panelHei
     love.graphics.print("Type: " .. item.type, textX, tooltipY + 64)
     love.graphics.print("Rarity: " .. item.rarity, textX, tooltipY + 80)
     love.graphics.print("Weight: " .. item.weight, textX, tooltipY + 96)
-    love.graphics.printf(item.description, textX, tooltipY + 116, tooltipWidth - 20, "left")
+    love.graphics.print("Sell price: " .. item.sellPrice .. " coins", textX, tooltipY + 112)
+    love.graphics.printf(item.description, textX, tooltipY + 132, tooltipWidth - 20, "left")
 end
 
 function Inventory:draw()

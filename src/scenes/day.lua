@@ -1,11 +1,14 @@
 local DayCycle = require("src.day_cycle")
 local Inventory = require("src.inventory")
 local Crafting = require("src.crafting")
+local Selling = require("src.selling")
+local gameState = require("src.game_state")
 
 local scene = {}
 local calendar = DayCycle.new()
 local inventory = Inventory.new()
 local crafting = Crafting.new(inventory)
+local selling = Selling.new(inventory, gameState)
 local titleFont
 local bodyFont
 local buttonFont
@@ -24,6 +27,9 @@ local function buttonBounds()
 end
 
 local function advance()
+    if calendar.stamp == 2 then
+        selling:leaveAfternoon()
+    end
     DayCycle.advance(calendar)
     if calendar.stamp ~= 1 then
         crafting:close()
@@ -36,6 +42,7 @@ function scene.load()
     buttonFont = love.graphics.newFont(14)
     inventory:load()
     crafting:load()
+    selling:load()
 end
 
 function scene.draw()
@@ -53,11 +60,13 @@ function scene.draw()
     love.graphics.setFont(bodyFont)
     local date = string.format("Week %d  |  Day %d (%s)", calendar.week, calendar.day, DayCycle.weekdays[calendar.day])
     love.graphics.printf(date, 20, 18, width * 0.55, "left")
+    love.graphics.printf("Quota: " .. gameState.coins .. " / " .. gameState.quota, 20, 42, width * 0.55, "left")
 
     love.graphics.setFont(titleFont)
     love.graphics.printf(DayCycle.stamps[calendar.stamp], width * 0.55 - 20, 18, width * 0.45, "right")
     inventory:draw()
     crafting:draw(calendar.stamp == 1)
+    selling:draw(calendar.stamp == 2)
 
     local x, y, buttonWidth, buttonHeight = buttonBounds()
     love.graphics.setColor(0.13, 0.16, 0.22)
@@ -71,6 +80,14 @@ function scene.mousepressed(x, y, button)
     if button ~= 1 then return end
 
     if crafting:mousepressed(x, y, button, calendar.stamp == 1) then return end
+    if selling:mousepressed(x, y, button, calendar.stamp == 2) then return end
+    if calendar.stamp == 2 and selling.open then
+        local slot = inventory:slotAt(x, y)
+        if slot then
+            selling:put(slot.id)
+            return
+        end
+    end
     if inventory:mousepressed(x, y, button) then return end
 
     local bx, by, bw, bh = buttonBounds()
@@ -82,6 +99,7 @@ end
 function scene.wheelmoved(x, y)
     inventory:wheelmoved(x, y)
     crafting:wheelmoved(x, y, calendar.stamp == 1)
+    selling:wheelmoved(x, y, calendar.stamp == 2)
 end
 
 function scene.keypressed(key)

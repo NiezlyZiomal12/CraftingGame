@@ -23,7 +23,7 @@ end
 local function panelBounds()
     local width, height = love.graphics.getDimensions()
     local panelWidth = math.min(350, math.floor(width * 0.42))
-    return width - panelWidth - 20, 50, math.min(350, math.floor(width * 0.48)), height - 120
+    return width - panelWidth - 20, 70, panelWidth, height - 140
 end
 
 local function listLayout(panelX, panelY, panelWidth, panelHeight)
@@ -165,7 +165,7 @@ local function drawTooltip(crafting, itemId, panelX, panelY, panelWidth, panelHe
     local textWidth = tooltipWidth - padding * 2
 
     local _, wrapped = font:getWrap(description, textWidth)
-    local statsCount = 5
+    local statsCount = 6
     local descriptionY = 32 + statsCount * lineHeight + 4
     local tooltipHeight = descriptionY + #wrapped * font:getHeight() + padding
 
@@ -189,6 +189,7 @@ local function drawTooltip(crafting, itemId, panelX, panelY, panelWidth, panelHe
         "Type: " .. tostring(item.type),
         "Rarity: " .. tostring(item.rarity),
         "Weight: " .. tostring(item.weight),
+        "Sell price: " .. tostring(item.sellPrice) .. " coins",
     }
     for i, line in ipairs(stats) do
         love.graphics.print(line, textX, tooltipY + 32 + (i - 1) * lineHeight)
