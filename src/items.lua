@@ -108,4 +108,10 @@ return {
         strongPower = 0, survivability = 1, looting = 0,
         description = "A small potion packed for the night expedition.",
     },
+    power_tonic = {
+        name = "Power Tonic", type = "Consumable", rarity = "Uncommon",
+        weight = 0.5, sellPrice = 9, equipmentSlot = "consumable",
+        strongPower = 3, survivability = 0, looting = 0,
+        description = "A tonic that boosts expedition strength.",
+    },
 }

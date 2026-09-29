@@ -69,8 +69,20 @@ function Loadout:close()
     self.message = nil
 end
 
+function Loadout:finishExpedition(returnItems)
+    for _, definition in ipairs(slotDefinitions) do
+        local id = self.slots[definition.key]
+        if id and returnItems then
+            self.inventory:add(id, 1)
+        end
+        self.slots[definition.key] = false
+    end
+    self.scroll = 0
+    self:close()
+end
+
 function Loadout:totals()
-    local power, survival, loot = 0, 0, 0
+    local power, survival, loot = 1, 0, 0 -- Base power keeps Woods Tier 1 available after a failed expedition.
     for _, definition in ipairs(slotDefinitions) do
         local id = self.slots[definition.key]
         if id then

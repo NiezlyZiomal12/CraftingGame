@@ -21,7 +21,11 @@ Coins earned from **Sell all** are added to the shared quota total when afternoo
 
 In the evening, click **Loadout** to prepare for the night. Click equipment or consumables in your inventory to place one into a matching slot. Click a filled loadout slot to return its item to inventory. Equipping another item in an occupied armor or weapon slot swaps the old item back. The five consumable slots each hold one item. The loadout stays equipped for the night, and the panel can be reopened the next evening.
 
-Item definitions in `src/items.lua` now include `equipmentSlot`, `strongPower`, `survivability`, and `looting`. Armor, a starter sword, and five potions are included so you can try every loadout slot. The panel shows combined stats from equipped items.
+Item definitions in `src/items.lua` now include `equipmentSlot`, `strongPower`, `survivability`, and `looting`. Armor, a starter sword, five healing potions, and two power tonics are included so you can try every loadout slot. The panel shows combined stats from equipped items.
+
+At night, choose Woods, Desert, or Tundra and a tier in the exploration panel. You need at least the recommended power to enter. Each survivability point adds 3.5 percentage points to the survival chance, up to 95%. Every two looting points add one item to the first reward. You can make one expedition attempt per night. On success, loot is added to Inventory and equipped items return. On failure, you stay alive but get no loot and lose all equipped loadout items. Skipping the expedition returns the loadout safely when the next morning begins.
+
+The player has 1 base power, so Woods Tier 1 remains available even after losing all equipment.
 
 ## Folders
 
@@ -32,5 +36,6 @@ Item definitions in `src/items.lua` now include `equipmentSlot`, `strongPower`, 
 - `src/selling.lua` manages the afternoon sell container and coin total.
 - `src/game_state.lua` stores the shared coin total and quota target.
 - `src/loadout.lua` stores equipped items and shows their combined power, survivability, and looting stats.
+- `src/locations.lua` defines expedition tiers and rewards; `src/exploration.lua` handles night expeditions.
 - `src/item_tooltip.lua` shows all item details on inventory and recipe hover.
 - `assets/` is ready for images, sounds, and fonts later.

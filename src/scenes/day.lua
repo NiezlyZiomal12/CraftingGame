@@ -3,6 +3,7 @@ local Inventory = require("src.inventory")
 local Crafting = require("src.crafting")
 local Selling = require("src.selling")
 local Loadout = require("src.loadout")
+local Exploration = require("src.exploration")
 local gameState = require("src.game_state")
 
 local scene = {}
@@ -11,6 +12,7 @@ local inventory = Inventory.new()
 local crafting = Crafting.new(inventory)
 local selling = Selling.new(inventory, gameState)
 local loadout = Loadout.new(inventory)
+local exploration = Exploration.new(inventory, loadout)
 gameState.loadout = loadout
 local titleFont
 local bodyFont
@@ -34,8 +36,13 @@ local function advance()
         selling:leaveAfternoon()
     elseif calendar.stamp == 3 then
         loadout:close()
+    elseif calendar.stamp == 4 then
+        exploration:leaveNight()
     end
     DayCycle.advance(calendar)
+    if calendar.stamp == 4 then
+        exploration:beginNight()
+    end
     if calendar.stamp ~= 1 then
         crafting:close()
     end
@@ -49,6 +56,7 @@ function scene.load()
     crafting:load()
     selling:load()
     loadout:load()
+    exploration:load()
 end
 
 function scene.draw()
@@ -74,6 +82,7 @@ function scene.draw()
     crafting:draw(calendar.stamp == 1)
     selling:draw(calendar.stamp == 2)
     loadout:draw(calendar.stamp == 3)
+    exploration:draw(calendar.stamp == 4)
 
     local x, y, buttonWidth, buttonHeight = buttonBounds()
     love.graphics.setColor(0.13, 0.16, 0.22)
@@ -89,6 +98,7 @@ function scene.mousepressed(x, y, button)
     if crafting:mousepressed(x, y, button, calendar.stamp == 1) then return end
     if selling:mousepressed(x, y, button, calendar.stamp == 2) then return end
     if loadout:mousepressed(x, y, button, calendar.stamp == 3) then return end
+    if exploration:mousepressed(x, y, button, calendar.stamp == 4) then return end
     if calendar.stamp == 2 and selling.open then
         local slot = inventory:slotAt(x, y)
         if slot then
@@ -116,6 +126,7 @@ function scene.wheelmoved(x, y)
     crafting:wheelmoved(x, y, calendar.stamp == 1)
     selling:wheelmoved(x, y, calendar.stamp == 2)
     loadout:wheelmoved(x, y, calendar.stamp == 3)
+    exploration:wheelmoved(x, y, calendar.stamp == 4)
 end
 
 function scene.keypressed(key)

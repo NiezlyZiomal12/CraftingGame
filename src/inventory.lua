@@ -52,6 +52,7 @@ function Inventory.new()
             { id = "leather_boots", quantity = 1 },
             { id = "rusty_sword", quantity = 1 },
             { id = "healing_potion", quantity = 5 },
+            { id = "power_tonic", quantity = 2 },
         },
     }, Inventory)
 end
