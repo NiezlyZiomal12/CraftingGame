@@ -14,6 +14,10 @@ function love.mousepressed(x, y, button)
     DayScene.mousepressed(x, y, button)
 end
 
+function love.wheelmoved(x, y)
+    DayScene.wheelmoved(x, y)
+end
+
 function love.keypressed(key)
     DayScene.keypressed(key)
 end

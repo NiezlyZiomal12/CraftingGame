@@ -1,7 +1,9 @@
 local DayCycle = require("src.day_cycle")
+local Inventory = require("src.inventory")
 
 local scene = {}
 local calendar = DayCycle.new()
+local inventory = Inventory.new()
 local titleFont
 local bodyFont
 local buttonFont
@@ -27,6 +29,7 @@ function scene.load()
     titleFont = love.graphics.newFont(26)
     bodyFont = love.graphics.newFont(16)
     buttonFont = love.graphics.newFont(14)
+    inventory:load()
 end
 
 function scene.draw()
@@ -47,6 +50,7 @@ function scene.draw()
 
     love.graphics.setFont(titleFont)
     love.graphics.printf(DayCycle.stamps[calendar.stamp], width * 0.55 - 20, 18, width * 0.45, "right")
+    inventory:draw()
 
     local x, y, buttonWidth, buttonHeight = buttonBounds()
     love.graphics.setColor(0.13, 0.16, 0.22)
@@ -59,10 +63,16 @@ end
 function scene.mousepressed(x, y, button)
     if button ~= 1 then return end
 
+    if inventory:mousepressed(x, y, button) then return end
+
     local bx, by, bw, bh = buttonBounds()
     if x >= bx and x <= bx + bw and y >= by and y <= by + bh then
         advance()
     end
+end
+
+function scene.wheelmoved(x, y)
+    inventory:wheelmoved(x, y)
 end
 
 function scene.keypressed(key)
